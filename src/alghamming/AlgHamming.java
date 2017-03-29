@@ -19,14 +19,20 @@ public class AlgHamming {
     
     private static int[] geraErro(int[] msgArray){
         Random r = new Random();
-        int i = r.nextInt(msgArray.length);
-        if(msgArray[i] == 1){
-            msgArray[i] = 0;
-        }else{
-            msgArray[i] = 1;
-        }
+        int i = r.nextInt(msgArray.length + 1);
+        System.out.println("RANDOM: " + i);
         
-        return msgArray;
+        if(i == msgArray.length){
+            System.out.println("SEM ERRO");
+            return msgArray;
+        }else{
+            if(msgArray[i] == 1){
+                msgArray[i] = 0;
+            }else{
+                msgArray[i] = 1;
+            }
+            return msgArray;
+        }
     }   
             
 }

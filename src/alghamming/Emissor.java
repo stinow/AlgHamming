@@ -80,6 +80,8 @@ public class Emissor {
             }
         }
         
+        printaMsg();
+        
         for(int i = 0; i < R; i++){
             arrayMsgR[((int) Math.pow(2, i)) - 1] = getParidade(arrayMsgR, i);
         }
