@@ -2,8 +2,6 @@ package alghamming;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class AlgHamming {
 
@@ -30,17 +28,17 @@ public class AlgHamming {
         
         int P = calcRedundancia(arrayMsg);
         int[] arrayMsgR = adicionaParidade(arrayMsg, P);
-        System.out.print("\nMensagem a enviar: ");
+        System.out.print("Mensagem codificada: ");
         for(int i = 0; i < arrayMsgR.length; i++) {
             System.out.print(arrayMsgR[arrayMsgR.length-i-1]);
         }
         System.out.println();
         
-        System.out.print("Enviando mensagem");
+        System.out.print("\nEnviando mensagem");
         int ct = 4;
         do{
             try {
-                TimeUnit.SECONDS.sleep(1);
+                TimeUnit.MILLISECONDS.sleep(500);
                 if(ct != 1)
                     System.out.print(".");
                 ct--;
@@ -51,7 +49,7 @@ public class AlgHamming {
         System.out.println("");
         
         int[] arrayMsgEnv = geraErro(arrayMsgR);
-        System.out.print("\n Mensagem enviada: ");
+        System.out.print("\nMensagem enviada: ");
         for(int i = 0; i < arrayMsgEnv.length; i++) {
             System.out.print(arrayMsgEnv[arrayMsgEnv.length-i-1]);
         }
@@ -67,7 +65,7 @@ public class AlgHamming {
             redund++;
         }
         
-        System.out.println("Bits de paridade: " + redund);
+        System.out.println("\nBits de paridade: " + redund);
         
         return redund;
     } //fim calcRedundancia()
@@ -120,7 +118,6 @@ public class AlgHamming {
         int i = r.nextInt(msgArray.length + 1);
         
         if(i == msgArray.length){
-            System.out.println("SEM ERRO");
             return msgArray;
         }else{
             if(msgArray[i] == 1){
@@ -141,7 +138,7 @@ public class AlgHamming {
         int power;
         // We shall use the value stored in 'power' to find the correct bits to check for parity.
 
-        int parity[] = new int[P];
+        int paridades[] = new int[P];
         // 'parity' array will store the values of the parity checks.
 
         String syndrome = new String();
@@ -158,27 +155,27 @@ public class AlgHamming {
                 int bit = ((Integer.parseInt(s))/((int) Math.pow(10, power)))%10;
                 if(bit == 1) {
                     if(arrayMsg[i] == 1) {
-                        parity[power] = (parity[power]+1)%2;
+                        paridades[power] = (paridades[power]+1)%2;
                     }
                 }
             }
-            syndrome = parity[power] + syndrome;
+            syndrome = paridades[power] + syndrome;
         }
         // This gives us the parity check equation values.
         // Using these values, we will now check if there is a single bit error and then correct it.
 
         int error_location = Integer.parseInt(syndrome, 2);
         if(error_location != 0) {
-            System.out.println("Error is at location " + error_location + ".");
+            System.out.print("Erro na posição: " + error_location);
             arrayMsg[error_location-1] = (arrayMsg[error_location-1]+1)%2;
-            System.out.println("Corrected code is:");
+            System.out.print("\nMensagem corrigida: ");
             for(int i=0 ; i < arrayMsg.length ; i++) {
                 System.out.print(arrayMsg[arrayMsg.length-i-1]);
             }
             System.out.println();
         }
         else {
-            System.out.println("There is no error in the received data.");
+            System.out.println("Mensagem recebida sem erros!");
         }
 
         // Finally, we shall extract the original data from the received (and corrected) code:
