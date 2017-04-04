@@ -1,6 +1,7 @@
 package alghamming;
 
-import java.util.*;
+import java.util.Random;
+import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 public class AlgHamming {
@@ -130,43 +131,35 @@ public class AlgHamming {
     }
     
     private static void receptor(int[] arrayMsg, int P){
+
+        //Variável para armazenar o valores corretos para checar a paridade
+        int checar_P;
         
-        // This is the receiver code. It receives a Hamming code in array 'a'.
-        // We also require the number of parity bits added to the original data.
-        // Now it must detect the error and correct it, if any.
-
-        int power;
-        // We shall use the value stored in 'power' to find the correct bits to check for parity.
-
+        //Array para armazenar os valores das paridades checadas
         int paridades[] = new int[P];
-        // 'parity' array will store the values of the parity checks.
 
-        String syndrome = new String();
-        // 'syndrome' string will be used to store the integer value of error location.
+        //Sindrome é utilizada para armazenar o valor do local do erro
+        String sindrome = new String();
 
-        for(power=0 ; power < P ; power++) {
-        // We need to check the parities, the same no of times as the no of parity bits added.
+        for(checar_P=0 ; checar_P < P ; checar_P++) {
 
             for(int i=0 ; i < arrayMsg.length ; i++) {
-                // Extracting the bit from 2^(power):
-
+                
                 int k = i+1;
                 String s = Integer.toBinaryString(k);
-                int bit = ((Integer.parseInt(s))/((int) Math.pow(10, power)))%10;
+                int bit = ((Integer.parseInt(s))/((int) Math.pow(10, checar_P)))%10;
                 if(bit == 1) {
                     if(arrayMsg[i] == 1) {
-                        paridades[power] = (paridades[power]+1)%2;
+                        paridades[checar_P] = (paridades[checar_P]+1)%2;
                     }
                 }
             }
-            syndrome = paridades[power] + syndrome;
+            sindrome = paridades[checar_P] + sindrome;
         }
-        // This gives us the parity check equation values.
-        // Using these values, we will now check if there is a single bit error and then correct it.
 
-        int error_location = Integer.parseInt(syndrome, 2);
+        int error_location = Integer.parseInt(sindrome, 2);
         if(error_location != 0) {
-            System.out.print("Erro na posição: " + error_location);
+            System.out.print("\nErro na posição: " + error_location);
             arrayMsg[error_location-1] = (arrayMsg[error_location-1]+1)%2;
             System.out.print("\nMensagem corrigida: ");
             for(int i=0 ; i < arrayMsg.length ; i++) {
@@ -177,16 +170,15 @@ public class AlgHamming {
         else {
             System.out.println("Mensagem recebida sem erros!");
         }
-
-        // Finally, we shall extract the original data from the received (and corrected) code:
-        System.out.println("Original data sent was:");
-        power = P-1;
+        
+        System.out.print("Mensagem original: ");
+        checar_P = P-1;
         for(int i=arrayMsg.length ; i > 0 ; i--) {
-            if(Math.pow(2, power) != i) {
+            if(Math.pow(2, checar_P) != i) {
                 System.out.print(arrayMsg[i-1]);
             }
             else {
-                power--;
+                checar_P--;
             }
         }
         System.out.println();
