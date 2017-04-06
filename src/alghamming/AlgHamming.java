@@ -9,13 +9,15 @@ public class AlgHamming {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
         
-        
         System.out.print("Insira a mensagem: ");
         String mensagem = input.nextLine();
         mensagem = new StringBuilder(mensagem).reverse().toString();
         char[] tempArrayMsg = mensagem.toCharArray();
+        //converte a mensagem em array de char para manipulá-la mais facilmente 
         int[] arrayMsg = new int[tempArrayMsg.length];
-        
+
+        //preenche o array novo nas posições corretas deixando em branco 
+        //os espaços dos bits de paridade
         int j = 0;
         for(int i = 0; i < tempArrayMsg.length; i++){
             if(tempArrayMsg[i] == '1'){
@@ -27,7 +29,9 @@ public class AlgHamming {
             }
         }
         
+        //calcula a quantidade de bits de paridade necessários
         int P = calcRedundancia(arrayMsg);
+        //adiciona os bits de paridade nas posições 2^R
         int[] arrayMsgR = adicionaParidade(arrayMsg, P);
         System.out.print("Mensagem codificada: ");
         for(int i = 0; i < arrayMsgR.length; i++) {
@@ -49,6 +53,8 @@ public class AlgHamming {
         }while(ct > 0);
         System.out.println("");
         
+        //inverte o valor de alguma posição aleatoriamente escolhida
+        //pode também não conter erros
         int[] arrayMsgEnv = geraErro(arrayMsgR);
         System.out.print("\nMensagem enviada: ");
         for(int i = 0; i < arrayMsgEnv.length; i++) {
@@ -56,12 +62,14 @@ public class AlgHamming {
         }
         System.out.println();
         
+        //recepção da mensagem
         receptor(arrayMsgEnv, P);
-    }
+    }//fim main()
     
     private static int calcRedundancia(int[] msgArray){
         int redund = 0;
         
+        //de acordo com a fórmula  2^R >= m + R + 1
         while (Math.pow(2, redund) < (msgArray.length + redund + 1)){
             redund++;
         }
@@ -75,10 +83,12 @@ public class AlgHamming {
         int arrayMsgR[] = new int[msgArray.length + P];
         int j = 0;
         
+        //adiciona 9 em todas as posições 2^R
         for(int i = 0; i < P; i++){
             arrayMsgR[((int) Math.pow(2, i))-1] = 9;
         }
         
+        //no array final da mensagem (arrayMsgR) coloca os valores de input
         for(int i = 0; i < arrayMsgR.length; i++){
             if(!(arrayMsgR[i] == 9)){
                 arrayMsgR[i] = msgArray[j];
@@ -86,6 +96,8 @@ public class AlgHamming {
             }
         }
         
+        //chama a função que realiza o cálculo do bit de paridade
+        //em todas as posições 2^R existentes
         for(int i = 0; i < P; i++){
             arrayMsgR[((int) Math.pow(2, i)) - 1] = getParidade(arrayMsgR, i);
         }
@@ -99,12 +111,17 @@ public class AlgHamming {
         
         for(int i = 0 ; i < arrayMsgR.length ; i++) {
             if(arrayMsgR[i] != 9) {
+                //se na posição i não é um valor não setado
+                //incrementa essa posição em 1 e converte pra binário
                 int k = i + 1;
                 String s = Integer.toBinaryString(k);
-
+                
+                //se o bit na posição 2^R é 1, confere o valor nessa posição
+                //e calcula a paridade
                 int x = ((Integer.parseInt(s))/((int) Math.pow(10, P)))%10;
                 if(x == 1) {
                     if(arrayMsgR[i] == 1) {
+                        //aqui sai 1 ou 0
                         paridade = (paridade+1)%2;
                     }
                 }
@@ -112,8 +129,10 @@ public class AlgHamming {
         }
         
         return paridade;
-    }
+    }//fim getParidade()
     
+    //método responsável por escolher uma posição aleatória para inverter
+    //o valor, gerando assim o erro
     private static int[] geraErro(int[] msgArray){
         Random r = new Random();
         int i = r.nextInt(msgArray.length + 1);
@@ -128,7 +147,7 @@ public class AlgHamming {
             }
             return msgArray;
         }
-    }
+    }//fim geraErro()
     
     private static void receptor(int[] arrayMsg, int P){
 
@@ -156,7 +175,7 @@ public class AlgHamming {
             }
             sindrome = paridades[checar_P] + sindrome;
         }
-
+        
         int error_location = Integer.parseInt(sindrome, 2);
         if(error_location != 0) {
             System.out.print("\nErro na posição: " + error_location);
@@ -183,5 +202,5 @@ public class AlgHamming {
         }
         System.out.println();
 
-    }
+    }//fim receptor()
 }
