@@ -121,7 +121,8 @@ public class AlgHamming {
                 int x = ((Integer.parseInt(s))/((int) Math.pow(10, P)))%10;
                 if(x == 1) {
                     if(arrayMsgR[i] == 1) {
-                        //aqui sai 1 ou 0
+                        //se paridade for 1, o resultado é 0;
+                        //se paridade for 0, o resultado é 1.
                         paridade = (paridade+1)%2;
                     }
                 }
